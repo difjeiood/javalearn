@@ -1,0 +1,107 @@
+使用JDBC的基本步骤（以查询为例）
+	1、注册驱动
+		DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+		
+	2、建立连接
+		Connection con = DriverManager.getConnection(url,user,password);
+		
+	3、创建statement
+		Statement sta = con.createStatement();
+	
+	4、执行sql，得到ResultSet结果集 
+		ResultSet rs = sta.executeQuery(sql);
+		
+	5、遍历结果集
+		while(rs.next()) {
+			...	rs.getString();
+			...rs.getInt();
+			.....
+			
+		}
+		
+	6、释放资源
+		rs.close();
+		st.close();
+		con.close();
+		
+JDBC工具类构建
+	1、资源释放工作的整合（略）
+	
+	2、驱动防二次注册
+		静态代码块，类加载就执行了 DriverManager.registerDriver(new Driver());   
+		改成Class.forName(com.mysql.jdbc.Driver);
+		
+	3、配置文件实现数据库连接（xxx.properties)
+		在src底下声明一个文件xxx.properties，内容如下
+			driverClass=com.mysql.jdbc.Driver
+			url=jdbc:mysql://localhost/shop
+			name=root
+			password=123456
+			
+		在工具类里面使用静态代码块，读取属性
+			static {
+				try {
+					//创建配置文件对象
+					Properties properties = new Properties();
+					//InputStream is =new FileInputStream("JDBC.properties");//对应文件位于工程根目录
+					//使用类加载器去读取src底下的资源文件通过class加载，在bin目录中
+					InputStream is = JDBCUtils.class.getClassLoader().getResourceAsStream("JDBC.properties");//src目录
+					//导入输入流
+					properties.load(is);
+
+					//读取属性
+					driverClass = properties.getProperty("driverClass");
+					url = properties.getProperty("url");
+					name = properties.getProperty("name");
+					password = properties.getProperty("password");
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+驱动注册小细节
+	mysql-connector-java-4.0之后可以不用自动注册
+		Class.forName(com.mysql.jdbc.Driver);可写可不写
+		
+		
+		
+--使用单元测试，测试代码
+	1、定义一个类，Testxxx ，里面定义方法 testxxx。
+	2、添加junit的支持
+	3、在方法上面加上注解，其实就是一个标记 @Test
+	4、选中方法运行
+	
+	
+--Dao模式
+	Data Access Object 数据访问对象
+	
+
+--statement安全问题
+	1、statement执行，其实式拼接sql语句的，先拼接sql语句，在一起执行
+		登录时的安全隐患(假设user表有用户名liguang 密码为44444的)
+			select * from user where username = "liguang" and password="123456" or 1=1;
+			也可以登录
+			
+	2、引入PrepareStatement
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+	
+		

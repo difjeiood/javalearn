@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+standalone : no - 该文档会依赖关联其他文档， yes - 这是一个独立的文档
+
+encoding详解
+	>在解析这个xml的时候，使用什么编码去解析  --解码
+	
+元素定义
+	》标签
+	
+
+CDATA区
+	如果某段字符串里面有过多的字符，并且里面包含了类似标签或者关键字的这种文字
+	不想让xml的解析器区解析，那么可以使用CDATA来包装,通常在服务器给客户端返回数据
+	的时候
+	
+	<![CDATA[内容]]>
+	
+XML解析
+	》其实就是获取元素里面的字符数据或者属性数据
+	
+XML解析方式（面试常问）
+	》有很多种，但是常用的有两种
+	DOM（document object model）:把整个xml全部读到内存当中，形成树状结构，整个文档称之位document对象
+		属性对应Attribute对象，所有的元素节点对应Element对象，文本也可以称之为
+		Text对象，以上所有对象都可以称之为Node节点。如果xml特别大，那么将会造成
+		内存溢出。可以对文档进行增删的操作
+		
+	SAX（Simple APU for Xml）：基于事件驱动，读取一行，解析一行，只可以进行查询
+	
+解析手段
+	jaxp sun公司，比较繁琐
+	
+	jdom
+	dom4j   使用比较广泛
+	
+	
+xml dom4j入门
+	dom4j基本用法
+		element.element("stu") : 返回该元素下的第一个stu元素
+		element.elements("stu") : 返回该元素下的所有stu元素
+		1、创建SAXReader对象
+		2、指定解析的xml
+		3、获取根元素
+		4、根据根元素获取子元素或者下面的子孙元素
+		
+Dom4j的Xpath使用
+	》dom4j里面支持xpath的写法，xpath其实是xml的路径语言，支持我们在解析xml的时候，能够快速的定位到具体的某一个元素
+	 1、添加jar包支持
+	2、在查找指定节点的时候，根据xpath语法规则来查找
+	3、后续代码与以前的解析代码一样。
+	
+	
+XML约束
+	比如一个学生的学生id不重复
+	
+	
+#DTD
+	语法自成一派，出现的比较早，可读性比较差
+	<!ELEMENT 元素的名称  元素的类型>
+	示例
+		<!ELEMENT stus (stu)+>
+		<!ELEMENT stu (name,age)>
+		<!ELEMENT name (#PCDATA)>
+		<!ELEMENT age (#PCDATA)>  //(#PCDATA)普通类型字符串
+		属性：<!ATTLIST stu id ID #IMPLIED> //给stu添加id属性
+				CDATA 属性是普通文本
+				ID 	  属性的值唯一
+		
+		元素的个数：
+					+ 一个或多个
+					* 0个或多个
+					？0个或一个
+		
+	引入DTD
+		<!DOCTYPE 根标签名字 网络上的dtd dtd的名称 dtd的路径>
+		<!DOCTYPE stus PUBLIC "//UNKNOWN" "unknown.dtd">
+		本地同一路径下
+		<!DOCTYPE stus SYSTEM "dtd名称">
+		
+	内嵌DTD
+		<!DOCTYPE stus [
+			<!ELEMENT stus (stu)>
+			<!ELEMENT stu (name,age)>
+			<!ELEMENT name (#PCDATA)>
+			<!ELEMENT age (#PCDATA)>
+		]>
+		
+		
+	
+#Schema（后缀.xsd)
+	其实就是一个xml，使用xml的语法规则，解析起来比较方便。
+	但是schema约束文本内容比DTD的内容还要多，所以目前也没有真正意义的代替DTD.
+	
+	xmlns : xml namespace : 名称空间/命名空间
+	targetNamespace ：目标名称空间，下面定义的那些元素都与这个名称空间绑定上
+	elementFormDefault : 元素的格式化情况
+	
+	示例
+	<element name="teachers">
+		<complexType>
+			<sequence maxOccurs=“unbounded”> //出现的最大次数
+				//复杂元素
+				<element name="teacher">
+					//声明式复杂元素
+					<complexType>
+					//声明式有序的
+						<sequence>
+							//简单元素
+							<element name="name" type = "string"></element>
+							<element name="age" type = "int"></element>
+						</sequence>
+					</complexType>
+				</element>
+			</sequence>
+		</complexType>	
+	</element>
+	
+	引入 <teachers 引入位置>
+		xmlns:xsi : 必须式这样的写法，也就是这个值已经式固定了。
+		xmlns：这里是命名空间，也固定了，写的是schema里面的项目顶部目标名称空间
+		xsi：schemaLocation：有两段：前半段是名称空间，也是目标空间的值，后面是约束文档的路径。
+		
+		
+名称空间的作用
+	一个xml如果想要指定它的约束，假设使用的是DTD，那么这个xml只能指定一个DTD，不能指定多个DTD
+	但是如果一个xml的约束是定义在schema里面，并且是多个schema，那么是可以的
+	
+	名称空间的作用就是在，写元素的时候，可以指该元素使用的是那一套约束规则
+		<aa:name></name>
+		<bb:name><name>
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
